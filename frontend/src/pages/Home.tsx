@@ -1,0 +1,201 @@
+import React, { useEffect } from 'react';
+import { Carousel, Card, Row, Col, Button, message } from 'antd';
+import { Link } from 'react-router-dom';
+import { ShoppingCartOutlined } from '@ant-design/icons';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '../redux/store';
+import { addToCart } from '../redux/cartSlice';
+import { getProducts } from '../redux/productSlice';
+
+// 导入商品图片
+import product1Image from '../assets/products/product-1-01.jpg';
+import product2Image from '../assets/products/product-2-01.jpg';
+import product3Image from '../assets/products/product-3-01.jpg';
+import product4Image from '../assets/products/product-4-01.jpg';
+
+// 导入轮播图图片
+import carousel1 from '../assets/carousel/1.png';
+import carousel2 from '../assets/carousel/2.png';
+import carousel3 from '../assets/carousel/3.png';
+
+const { Meta } = Card;
+
+const Home: React.FC = () => {
+  const dispatch = useDispatch();
+  const { products } = useSelector((state: RootState) => state.product);
+
+  // 页面加载时获取商品列表
+  useEffect(() => {
+    dispatch(getProducts() as any);
+  }, [dispatch]);
+
+  // 轮播图数据
+  const carouselItems = [
+    {
+      id: 1,
+      image: carousel1,
+      title: '夏季大促销',
+      description: '全场商品5折起，机不可失！'
+    },
+    {
+      id: 2,
+      image: carousel2,
+      title: '新品上市',
+      description: '最新款电子产品，抢先体验！'
+    },
+    {
+      id: 3,
+      image: carousel3,
+      title: '限时抢购',
+      description: '每日限量商品，先到先得！'
+    }
+  ];
+
+  // 推荐商品数据 - 使用从API获取的商品，或者默认商品
+  const recommendedProducts = products.length > 0 ? 
+    products.slice(0, 4) : 
+    [
+      {
+        id: 7,
+        name: '蓝牙耳机 Pro',
+        price: 999,
+        discountPrice: 799,
+        image: product1Image
+      },
+      {
+        id: 8,
+        name: '机械游戏键盘',
+        price: 1299,
+        discountPrice: 999,
+        image: product2Image
+      },
+      {
+        id: 9,
+        name: '智能手机 Pro Max',
+        price: 6999,
+        discountPrice: 5999,
+        image: product3Image
+      },
+      {
+        id: 10,
+        name: '无线降噪耳机',
+        price: 1599,
+        discountPrice: 1299,
+        image: product4Image
+      }
+    ];
+
+  // 加入购物车处理函数
+  const handleAddToCart = (product: any) => {
+    dispatch(addToCart({
+      productId: product.id,
+      quantity: 1,
+      product
+    }));
+    message.success('商品已成功加入购物车');
+  };
+
+  return (
+    <div>
+      {/* 轮播图 */}
+      <Carousel autoplay style={{ margin: '0 0 30px 0', padding: 0, width: '100%', overflow: 'hidden', background: 'transparent', border: 'none' }}>
+        {carouselItems.map(item => (
+          <div key={item.id} style={{ position: 'relative', width: '100%', height: '400px', overflow: 'hidden', background: 'transparent', margin: 0, padding: 0 }}>
+            <img
+              src={item.image}
+              alt={item.title}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', background: 'transparent', display: 'block', margin: 0, padding: 0 }}
+            />
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0, 0, 0, 0.5)', padding: '20px', color: '#fff' }}>
+              <h2 style={{ margin: '0 0 10px', fontSize: '24px' }}>{item.title}</h2>
+              <p style={{ margin: 0, fontSize: '16px' }}>{item.description}</p>
+            </div>
+          </div>
+        ))}
+      </Carousel>
+
+      {/* 推荐商品 */}
+      <div style={{ marginBottom: '30px' }}>
+        <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: 'bold' }}>推荐商品</h2>
+        <Row gutter={[16, 16]}>
+          {recommendedProducts.map(product => (
+            <Col xs={24} sm={12} md={8} lg={6} key={product.id}>
+              <Link to={`/product/${product.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                <Card
+                  hoverable
+                  cover={<img alt={product.name} src={product.image} style={{ height: '200px', objectFit: 'cover' }} />}
+                  actions={[
+                    <span key="view">查看详情</span>,
+                    <Button
+                      type="text"
+                      icon={<ShoppingCartOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(product);
+                      }}
+                      key="cart"
+                    >
+                      加入购物车
+                    </Button>
+                  ]}
+                >
+                  <Meta
+                    title={
+                      <span style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                        {product.name}
+                      </span>
+                    }
+                    description={
+                      <div>
+                        {product.discountPrice ? (
+                          <div>
+                            <span style={{ fontSize: '18px', color: '#ff4d4f', fontWeight: 'bold' }}>¥{product.discountPrice}</span>
+                            <span style={{ marginLeft: '10px', fontSize: '14px', color: '#999', textDecoration: 'line-through' }}>¥{product.price}</span>
+                          </div>
+                        ) : (
+                          <span style={{ fontSize: '18px', color: '#ff4d4f', fontWeight: 'bold' }}>¥{product.price}</span>
+                        )}
+                      </div>
+                    }
+                  />
+                </Card>
+              </Link>
+            </Col>
+          ))}
+        </Row>
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <Button type="primary" size="large">
+            <Link to="/products" style={{ color: '#fff' }}>查看全部商品</Link>
+          </Button>
+        </div>
+      </div>
+
+      {/* 特色服务 */}
+      <div style={{ marginBottom: '30px', backgroundColor: '#f0f2f5', padding: '30px', borderRadius: '8px' }}>
+        <h2 style={{ marginBottom: '20px', fontSize: '24px', fontWeight: 'bold', textAlign: 'center' }}>我们的特色服务</h2>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8}>
+            <div style={{ textAlign: 'center', padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
+              <h3 style={{ marginBottom: '10px', fontSize: '18px', fontWeight: 'bold' }}>品质保证</h3>
+              <p style={{ margin: 0, color: '#666' }}>所有商品均经过严格质量检测</p>
+            </div>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <div style={{ textAlign: 'center', padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
+              <h3 style={{ marginBottom: '10px', fontSize: '18px', fontWeight: 'bold' }}>快速配送</h3>
+              <p style={{ margin: 0, color: '#666' }}>全国范围内24小时发货</p>
+            </div>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <div style={{ textAlign: 'center', padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
+              <h3 style={{ marginBottom: '10px', fontSize: '18px', fontWeight: 'bold' }}>七天无理由退换</h3>
+              <p style={{ margin: 0, color: '#666' }}>不满意随时退换，购物无忧</p>
+            </div>
+          </Col>
+        </Row>
+      </div>
+    </div>
+  );
+};
+
+export default Home;
