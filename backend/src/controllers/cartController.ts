@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { validationResult } from 'express-validator';
 import { Cart, CartItem, Product } from '../models';
 
@@ -29,13 +29,13 @@ const getCart = async (req: any, res: Response) => {
       return res.status(404).json({ message: '购物车不存在' });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       cart,
       message: '获取购物车成功'
     });
   } catch (error) {
     console.error('获取购物车失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -114,13 +114,13 @@ const addToCart = async (req: any, res: Response) => {
       ]
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       cart: updatedCart,
       message: '商品已添加到购物车'
     });
   } catch (error) {
     console.error('添加商品到购物车失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -186,13 +186,13 @@ const updateCartItem = async (req: any, res: Response) => {
       ]
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       cart: updatedCart,
       message: '购物车商品更新成功'
     });
   } catch (error) {
     console.error('更新购物车商品失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -239,13 +239,13 @@ const removeFromCart = async (req: any, res: Response) => {
       ]
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       cart: updatedCart,
       message: '购物车商品删除成功'
     });
   } catch (error) {
     console.error('删除购物车商品失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -267,13 +267,13 @@ const clearCart = async (req: any, res: Response) => {
     cart.totalAmount = 0;
     await cart.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       cart,
       message: '购物车清空成功'
     });
   } catch (error) {
     console.error('清空购物车失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 

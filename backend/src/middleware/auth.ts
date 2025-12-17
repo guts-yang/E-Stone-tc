@@ -65,7 +65,7 @@ const auth = async (req: AuthRequest, res: Response, next: NextFunction) => {
     console.log('设置req.user成功:', req.user);
     console.log('req.user.role:', req.user.role);
     
-    next();
+    return next();
   } catch (error) {
     console.error('auth中间件错误:', error);
     if (error instanceof jwt.JsonWebTokenError) {
@@ -74,7 +74,7 @@ const auth = async (req: AuthRequest, res: Response, next: NextFunction) => {
     if (error instanceof jwt.TokenExpiredError) {
       return res.status(401).json({ message: '认证令牌已过期' });
     }
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -101,10 +101,10 @@ const admin = (req: AuthRequest, res: Response, next: NextFunction) => {
     }
     
     console.log('管理员权限验证成功:', userRole);
-    next();
+    return next();
   } catch (error) {
     console.error('管理员权限验证错误:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 

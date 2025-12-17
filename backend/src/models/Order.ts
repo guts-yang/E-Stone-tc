@@ -35,6 +35,7 @@ interface OrderAttributes {
   notes: string | null;
   createdAt: Date;
   updatedAt: Date;
+  items?: any[]; // 订单项
 }
 
 // 创建订单时的可选属性
@@ -55,6 +56,7 @@ class Order extends Model<OrderAttributes, OrderCreationAttributes> implements O
   public notes!: string | null;
   public createdAt!: Date;
   public updatedAt!: Date;
+  public items?: any[];
 }
 
 // 初始化Order模型

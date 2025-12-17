@@ -65,7 +65,7 @@ const getProducts = async (req: Request, res: Response) => {
       offset: (Number(page) - 1) * Number(limit)
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       products,
       pagination: {
         total: count,
@@ -77,7 +77,7 @@ const getProducts = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('获取商品列表失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -110,13 +110,13 @@ const getProduct = async (req: Request, res: Response) => {
     product.viewCount += 1;
     await product.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       product,
       message: '获取商品详情成功'
     });
   } catch (error) {
     console.error('获取商品详情失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -144,13 +144,13 @@ const addProduct = async (req: Request, res: Response) => {
       soldCount: 0
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       product,
       message: '添加商品成功'
     });
   } catch (error) {
     console.error('添加商品失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -183,13 +183,13 @@ const updateProduct = async (req: Request, res: Response) => {
 
     await product.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       product,
       message: '更新商品成功'
     });
   } catch (error) {
     console.error('更新商品失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -224,10 +224,10 @@ const deleteProduct = async (req: Request, res: Response) => {
     // 删除商品记录（物理删除）
     await product.destroy();
 
-    res.status(200).json({ message: '删除商品成功' });
+    return res.status(200).json({ message: '删除商品成功' });
   } catch (error) {
     console.error('删除商品失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -274,13 +274,13 @@ const uploadProductImage = async (req: Request, res: Response) => {
       }
     }
 
-    res.status(201).json({
+    return res.status(201).json({
       images: uploadedImages,
       message: '图片上传成功'
     });
   } catch (error) {
     console.error('上传商品图片失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -311,10 +311,10 @@ const setPrimaryImage = async (req: Request, res: Response) => {
     image.isPrimary = true;
     await image.save();
 
-    res.status(200).json({ message: '设置主要图片成功' });
+    return res.status(200).json({ message: '设置主要图片成功' });
   } catch (error) {
     console.error('设置主要商品图片失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -348,15 +348,15 @@ const deleteProductImage = async (req: Request, res: Response) => {
       await firstImage.save();
     }
 
-    res.status(200).json({ message: '删除图片成功' });
+    return res.status(200).json({ message: '删除图片成功' });
   } catch (error) {
     console.error('删除商品图片失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
 // 获取商品分类列表
-const getCategories = async (req: Request, res: Response) => {
+const getCategories = async (_req: Request, res: Response) => {
   try {
     const categories = await Category.findAll({
       include: [
@@ -371,13 +371,13 @@ const getCategories = async (req: Request, res: Response) => {
       }
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       categories,
       message: '获取商品分类列表成功'
     });
   } catch (error) {
     console.error('获取商品分类列表失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -415,13 +415,13 @@ const addCategory = async (req: Request, res: Response) => {
       level
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       category,
       message: '添加商品分类成功'
     });
   } catch (error) {
     console.error('添加商品分类失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -468,13 +468,13 @@ const updateCategory = async (req: Request, res: Response) => {
 
     await category.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       category,
       message: '更新商品分类成功'
     });
   } catch (error) {
     console.error('更新商品分类失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -504,10 +504,10 @@ const deleteCategory = async (req: Request, res: Response) => {
     // 删除分类
     await category.destroy();
 
-    res.status(200).json({ message: '删除商品分类成功' });
+    return res.status(200).json({ message: '删除商品分类成功' });
   } catch (error) {
     console.error('删除商品分类失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 

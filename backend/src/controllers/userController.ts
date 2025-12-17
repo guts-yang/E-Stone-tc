@@ -57,12 +57,12 @@ const register = async (req: Request, res: Response) => {
     // 生成JWT
     const token = jwt.sign(
       { userId: user.id },
-      process.env.JWT_SECRET!,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+      process.env.JWT_SECRET! as any,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '1h' } as any
     );
 
     // 返回用户信息和令牌
-    res.status(201).json({
+    return res.status(201).json({
       token,
       user: {
         id: user.id,
@@ -75,7 +75,7 @@ const register = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('注册失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -110,12 +110,12 @@ const login = async (req: Request, res: Response) => {
     // 生成JWT
     const token = jwt.sign(
       { userId: user.id },
-      process.env.JWT_SECRET!,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+      process.env.JWT_SECRET! as any,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '1h' } as any
     );
 
     // 返回用户信息和令牌
-    res.status(200).json({
+    return res.status(200).json({
       token,
       user: {
         id: user.id,
@@ -128,7 +128,7 @@ const login = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('登录失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -153,13 +153,13 @@ const getCurrentUser = async (req: any, res: Response) => {
       return res.status(404).json({ message: '用户不存在' });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       user,
       message: '获取用户信息成功'
     });
   } catch (error) {
     console.error('获取用户信息失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -222,13 +222,13 @@ const updateUser = async (req: any, res: Response) => {
       ]
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       user: updatedUser,
       message: '更新用户信息成功'
     });
   } catch (error) {
     console.error('更新用户信息失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -260,26 +260,26 @@ const changePassword = async (req: any, res: Response) => {
     user.password = newPassword;
     await user.save();
 
-    res.status(200).json({ message: '密码更改成功' });
+    return res.status(200).json({ message: '密码更改成功' });
   } catch (error) {
     console.error('更改密码失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
 // 用户注销
-const logout = async (req: any, res: Response) => {
+const logout = async (_req: any, res: Response) => {
   try {
     // JWT是无状态的，客户端删除令牌即可
-    res.status(200).json({ message: '注销成功' });
+    return res.status(200).json({ message: '注销成功' });
   } catch (error) {
     console.error('注销失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
 // 获取所有用户（管理员）
-const getAllUsers = async (req: any, res: Response) => {
+const getAllUsers = async (_req: any, res: Response) => {
   try {
     const users = await User.findAll({
       attributes: { exclude: ['password'] },
@@ -292,13 +292,13 @@ const getAllUsers = async (req: any, res: Response) => {
       order: [['createdAt', 'DESC']]
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       users,
       message: '获取用户列表成功'
     });
   } catch (error) {
     console.error('获取用户列表失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -321,13 +321,13 @@ const getUser = async (req: any, res: Response) => {
       return res.status(404).json({ message: '用户不存在' });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       user,
       message: '获取用户信息成功'
     });
   } catch (error) {
     console.error('获取用户信息失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -350,7 +350,7 @@ const updateUserStatus = async (req: any, res: Response) => {
     user.status = status;
     await user.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       user: {
         id: user.id,
         username: user.username,
@@ -362,7 +362,7 @@ const updateUserStatus = async (req: any, res: Response) => {
     });
   } catch (error) {
     console.error('更新用户状态失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 

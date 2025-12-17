@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { validationResult } from 'express-validator';
 import Sequelize from 'sequelize';
 import { Cart, CartItem, Order, OrderItem, Product, User } from '../models';
@@ -35,12 +35,12 @@ const createOrder = async (req: any, res: Response) => {
       ]
     });
 
-    if (!cart || cart.items.length === 0) {
+    if (!cart || !cart.items || cart.items.length === 0) {
       return res.status(400).json({ message: '购物车为空' });
     }
 
     // 检查所有商品库存
-    for (const item of cart.items) {
+    for (const item of cart.items!) {
       const product = item.product;
       if (!product || product.stock < item.quantity) {
         return res.status(400).json({ message: `商品 ${product?.name || '未知商品'} 库存不足` });
@@ -70,7 +70,7 @@ const createOrder = async (req: any, res: Response) => {
       }, { transaction });
 
       // 创建订单项
-      for (const item of cart.items) {
+      for (const item of cart.items!) {
         await OrderItem.create({
           orderId: order.id,
           productId: item.productId,
@@ -117,7 +117,7 @@ const createOrder = async (req: any, res: Response) => {
         ]
       });
 
-      res.status(201).json({
+      return res.status(201).json({
         order: createdOrder,
         message: '订单创建成功'
       });
@@ -128,7 +128,7 @@ const createOrder = async (req: any, res: Response) => {
     }
   } catch (error) {
     console.error('创建订单失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -172,7 +172,7 @@ const getOrders = async (req: any, res: Response) => {
       offset: (Number(page) - 1) * Number(limit)
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       orders,
       pagination: {
         total: count,
@@ -184,7 +184,7 @@ const getOrders = async (req: any, res: Response) => {
     });
   } catch (error) {
     console.error('获取订单列表失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -214,13 +214,13 @@ const getOrder = async (req: any, res: Response) => {
       return res.status(403).json({ message: '没有权限访问该订单' });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       order,
       message: '获取订单详情成功'
     });
   } catch (error) {
     console.error('获取订单详情失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -257,13 +257,13 @@ const updateOrderStatus = async (req: any, res: Response) => {
 
     await order.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       order,
       message: '更新订单状态成功'
     });
   } catch (error) {
     console.error('更新订单状态失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -310,23 +310,25 @@ const cancelOrder = async (req: any, res: Response) => {
       await order.save({ transaction });
 
       // 恢复商品库存
-      for (const item of order.items) {
-        await Product.update(
-          { 
-            stock: Sequelize.literal(`stock + ${item.quantity}`),
-            soldCount: Sequelize.literal(`soldCount - ${item.quantity}`)
-          },
-          { 
-            where: { id: item.productId },
-            transaction 
-          }
-        );
+      if (order.items && order.items.length > 0) {
+        for (const item of order.items) {
+          await Product.update(
+            { 
+              stock: Sequelize.literal(`stock + ${item.quantity}`),
+              soldCount: Sequelize.literal(`soldCount - ${item.quantity}`)
+            },
+            { 
+              where: { id: item.productId },
+              transaction 
+            }
+          );
+        }
       }
 
       // 提交事务
       await transaction.commit();
 
-      res.status(200).json({
+      return res.status(200).json({
         order,
         message: '订单取消成功'
       });
@@ -337,7 +339,7 @@ const cancelOrder = async (req: any, res: Response) => {
     }
   } catch (error) {
     console.error('取消订单失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
@@ -396,18 +398,18 @@ const payOrder = async (req: any, res: Response) => {
       // 邮件发送失败不影响订单支付流程
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       order,
       message: '订单支付成功'
     });
   } catch (error) {
     console.error('支付订单失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 
 // 获取订单统计（管理员）
-const getOrderStats = async (req: any, res: Response) => {
+const getOrderStats = async (_req: any, res: Response) => {
   try {
     // 获取订单总数
     const totalOrders = await Order.count();
@@ -432,7 +434,7 @@ const getOrderStats = async (req: any, res: Response) => {
       where: { status: [OrderStatus.PAID, OrderStatus.SHIPPED, OrderStatus.DELIVERED] }
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       stats: {
         totalOrders,
         pendingOrders,
@@ -446,7 +448,7 @@ const getOrderStats = async (req: any, res: Response) => {
     });
   } catch (error) {
     console.error('获取订单统计失败:', error);
-    res.status(500).json({ message: '服务器错误' });
+    return res.status(500).json({ message: '服务器错误' });
   }
 };
 

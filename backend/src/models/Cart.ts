@@ -9,6 +9,7 @@ interface CartAttributes {
   totalAmount: number;
   createdAt: Date;
   updatedAt: Date;
+  items?: any[]; // 购物车商品项
 }
 
 // 创建购物车时的可选属性
@@ -21,6 +22,7 @@ class Cart extends Model<CartAttributes, CartCreationAttributes> implements Cart
   public totalAmount!: number;
   public createdAt!: Date;
   public updatedAt!: Date;
+  public items?: any[];
 }
 
 // 初始化Cart模型
