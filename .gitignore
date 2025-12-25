@@ -77,7 +77,10 @@ dist
 
 # Gatsby files
 .cache/
-public
+public/
+
+# Exception: track product images
+!backend/public/products/
 
 # Storybook build outputs
 .out
