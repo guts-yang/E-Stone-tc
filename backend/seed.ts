@@ -21,7 +21,7 @@ const seedData = async () => {
 
     // 创建管理员用户
     const adminUsername = 'admin';
-    const adminEmail = 'admin@example.com';
+    const adminEmail = '578165807@qq.com';
     const adminPassword = 'Lcy@20050210';
     
     let adminUser = await User.findOne({ where: { username: adminUsername } });
@@ -39,11 +39,11 @@ const seedData = async () => {
       await UserProfile.create({
         userId: adminUser.id,
         name: '管理员',
-        phone: '13800138000',
+        phone: '13316899160',
         address: '中国',
-        city: '',
-        province: '',
-        postalCode: '',
+        city: '广州',
+        province: '广东省',
+        postalCode: '510000',
         country: '中国'
       });
       console.log('管理员用户资料创建成功!');
@@ -68,43 +68,143 @@ const seedData = async () => {
     ], { ignoreDuplicates: true });
     console.log('Categories created!');
 
-    // 创建服装分类（确保存在）
-    let clothingCategory = await Category.findOne({ where: { name: '服装' } });
-    if (!clothingCategory) {
-      clothingCategory = await Category.create({
-        name: '服装',
-        description: '各类服装产品'
-      });
-      console.log('服装分类创建成功!');
+    // 获取所有分类
+    const categories: Record<string, number> = {};
+    const categoryList = await Category.findAll();
+    for (const cat of categoryList) {
+      categories[cat.name] = cat.id;
     }
 
-    // 检查是否已存在服装商品
-    const existingClothingProduct = await Product.findOne({ where: { name: '韩系穿搭高定轻奢水貂毛外套' } });
-    if (!existingClothingProduct) {
-      // 创建服装商品
-      const clothingProduct = await Product.create({
-        categoryId: clothingCategory.id,
+    // 创建商品数据
+    const productsData = [
+      {
+        categoryName: '蓝牙耳机',
+        name: 'Sony WH-1000XM5 无线降噪耳机',
+        description: '行业领先降噪技术，30小时续航，高解析度音频，支持多点连接。',
+        price: 2999,
+        discountPrice: 2499,
+        stock: 50,
+        images: ['headphones-1.jpg', 'headphones-2.jpg', 'headphones-3.jpg']
+      },
+      {
+        categoryName: '蓝牙耳机',
+        name: 'Bose QuietComfort 45 消噪耳机',
+        description: '世界级消噪技术，轻盈舒适，24小时续航，TriPort声学结构。',
+        price: 2699,
+        discountPrice: 2299,
+        stock: 40,
+        images: ['headphones-bose-1.jpg', 'headphones-bose-2.jpg']
+      },
+      {
+        categoryName: '游戏键盘',
+        name: '机械键盘 樱桃红轴 RGB背光',
+        description: '德国樱桃红轴，支持热插拔，1680万色RGB背光，全键无冲设计。',
+        price: 699,
+        discountPrice: 599,
+        stock: 100,
+        images: ['keyboard-1.jpg', 'keyboard-2.jpg', 'keyboard-3.jpg']
+      },
+      {
+        categoryName: '游戏键盘',
+        name: 'Logitech G Pro X 游戏机械键盘',
+        description: '可更换微动，Doubleshot PBT键帽，LIGHTSYNC RGB灯效。',
+        price: 899,
+        discountPrice: 799,
+        stock: 80,
+        images: ['keyboard-logitech-1.jpg', 'keyboard-logitech-2.jpg']
+      },
+      {
+        categoryName: '智能手机',
+        name: 'iPhone 15 Pro Max 256GB',
+        description: 'A17 Pro芯片，钛金属设计，5倍光学变焦，USB-C接口。',
+        price: 9999,
+        discountPrice: 8999,
+        stock: 30,
+        images: ['iphone-1.jpg', 'iphone-2.jpg', 'iphone-3.jpg']
+      },
+      {
+        categoryName: '智能手机',
+        name: 'Samsung Galaxy S24 Ultra',
+        description: 'AI智能助手，钛金属边框，200MP主摄，S Pen手写笔。',
+        price: 8999,
+        discountPrice: 7999,
+        stock: 35,
+        images: ['samsung-1.jpg', 'samsung-2.jpg', 'samsung-3.jpg']
+      },
+      {
+        categoryName: '无线耳机',
+        name: 'AirPods Pro 第二代',
+        description: '自适应音频，个性化空间音频，H2芯片，主动降噪。',
+        price: 1899,
+        discountPrice: 1699,
+        stock: 100,
+        images: ['airpods-1.jpg', 'airpods-2.jpg', 'airpods-3.jpg']
+      },
+      {
+        categoryName: '无线耳机',
+        name: 'Samsung Galaxy Buds2 Pro',
+        description: '24bit高保真音质，智能主动降噪，舒适贴合设计。',
+        price: 1299,
+        discountPrice: 999,
+        stock: 80,
+        images: ['buds-1.jpg', 'buds-2.jpg']
+      },
+      {
+        categoryName: '服装',
         name: '韩系穿搭高定轻奢水貂毛外套',
         description: '冬季V领一体绒宽松加厚防寒皮草大衣，韩系穿搭风格，高定轻奢品质，水貂毛材质，保暖舒适。',
         price: 599,
         discountPrice: 399,
         stock: 30,
-        status: ProductStatus.ACTIVE
-      });
-      console.log('服装商品创建成功:', clothingProduct.name);
-
-      // 关联商品图片
-      const clothingImages = ['5-1.jpg', '6.jpg', '7.jpg', '8.jpg'];
-      for (const imageName of clothingImages) {
-        await ProductImage.create({
-          productId: clothingProduct.id,
-          imageUrl: `/products/${imageName}`,
-          isPrimary: imageName === clothingImages[0] // 第一个图片设为主图
-        });
-        console.log(`图片关联成功: ${imageName} 到 ${clothingProduct.name}`);
+        images: ['5-1.jpg', '6.jpg', '7.jpg', '8.jpg']
+      },
+      {
+        categoryName: '服装',
+        name: '简约风宽松百搭休闲卫衣',
+        description: '2024新款秋季卫衣，宽松版型，纯棉面料，简约设计，多色可选。',
+        price: 199,
+        discountPrice: 149,
+        stock: 200,
+        images: ['hoodie-1.jpg', 'hoodie-2.jpg']
+      },
+      {
+        categoryName: '服装',
+        name: '高腰显瘦直筒牛仔裤',
+        description: '弹性面料，修饰腿型，高腰设计，经典百搭，时尚休闲。',
+        price: 259,
+        discountPrice: 199,
+        stock: 150,
+        images: ['jeans-1.jpg', 'jeans-2.jpg', 'jeans-3.jpg']
       }
-    } else {
-      console.log('服装商品已存在，跳过创建!');
+    ];
+
+    // 批量创建商品
+    for (const productData of productsData) {
+      const existingProduct = await Product.findOne({ where: { name: productData.name } });
+      if (!existingProduct && categories[productData.categoryName]) {
+        const product = await Product.create({
+          categoryId: categories[productData.categoryName],
+          name: productData.name,
+          description: productData.description,
+          price: productData.price,
+          discountPrice: productData.discountPrice,
+          stock: productData.stock,
+          status: ProductStatus.ACTIVE
+        });
+        console.log('商品创建成功:', product.name);
+
+        for (let i = 0; i < productData.images.length; i++) {
+          const imageName = productData.images[i];
+          await ProductImage.create({
+            productId: product.id,
+            imageUrl: `/products/${imageName}`,
+            isPrimary: i === 0
+          });
+          console.log(`  图片关联成功: ${imageName}`);
+        }
+      } else if (existingProduct) {
+        console.log('商品已存在，跳过:', productData.name);
+      }
     }
 
     console.log('Seed data created successfully!');
