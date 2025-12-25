@@ -200,8 +200,8 @@ const productSlice = createSlice({
                   imageUrl = `/public/products${imageUrl}`;
                 }
               }
-              // 添加后端地址前缀
-              imageUrl = `http://localhost:3001${imageUrl}`;
+              // 添加相对路径前缀
+              imageUrl = `${imageUrl}`;
             }
             
             return {
@@ -251,8 +251,8 @@ const productSlice = createSlice({
                 imageUrl = `/public/products${imageUrl}`;
               }
             }
-            // 添加后端地址前缀
-            imageUrl = `http://localhost:3001${imageUrl}`;
+            // 添加相对路径前缀
+            imageUrl = `${imageUrl}`;
           }
           
           newProduct = {
@@ -305,8 +305,8 @@ const productSlice = createSlice({
                 imageUrl = `/public/products${imageUrl}`;
               }
             }
-            // 添加后端地址前缀
-            imageUrl = `http://localhost:3001${imageUrl}`;
+            // 添加相对路径前缀
+            imageUrl = `${imageUrl}`;
           }
           
           product.image = imageUrl;
@@ -329,8 +329,8 @@ const productSlice = createSlice({
                   imageUrl = `/public/products${imageUrl}`;
                 }
               }
-              // 添加后端地址前缀
-              imageUrl = `http://localhost:3001${imageUrl}`;
+              // 添加相对路径前缀
+              imageUrl = `${imageUrl}`;
             }
             
             return {
@@ -378,8 +378,8 @@ const productSlice = createSlice({
                 imageUrl = `/public/products${imageUrl}`;
               }
             }
-            // 添加后端地址前缀
-            imageUrl = `http://localhost:3001${imageUrl}`;
+            // 添加相对路径前缀
+            imageUrl = `${imageUrl}`;
           }
           
           updatedProduct = {
