@@ -185,7 +185,7 @@ const Checkout: React.FC = () => {
                   </Text>
                   <div style={{ display: 'flex', justifyContent: 'center' }}>
                     <img 
-                      src={`/payment-qrcode-${paymentMethod}.jpg`} 
+                      src={`${import.meta.env.BASE_URL}payment-qrcode-${paymentMethod}.jpg`} 
                       alt={`${paymentMethod}收款码`} 
                       style={{ 
                         width: '250px', 
