@@ -80,6 +80,7 @@ dist
 # public/ matches backend/public so we must explicitly unignore backend/public
 public/
 !backend/public/
+!frontend/public/
 
 # Exception: track product images
 !backend/public/products/
