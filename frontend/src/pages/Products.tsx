@@ -6,10 +6,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../redux/store';
 import { getProducts } from '../redux/productSlice';
 import product1Image from '../assets/products/product-1-01.jpg';
-import product2Image from '../assets/products/product-2-01.jpg';
-import product3Image from '../assets/products/product-3-01.jpg';
+import product2Image from '../assets/products/iflytek-1.jpg';
+import product3Image from '../assets/products/buds3-1.jpg';
 import product4Image from '../assets/products/product-4-01.jpg';
 import product5Image from '../assets/products/5-1.jpg';
+import productSpeakerImage from '../assets/products/speaker-1.jpg';
+import productTeaImage from '../assets/products/tea-set-1.jpg';
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -18,14 +20,14 @@ const Products: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
-  // 获取商品列表和加载状态
+  // 从Redux store获取商品列表
   const { products, loading } = useSelector((state: RootState) => state.product);
   
-  // 获取用户信息，判断是否为管理员
+  // 检查当前用户是否为管理员
   const { user, isAuthenticated } = useSelector((state: RootState) => state.user);
   const isAdmin = isAuthenticated && user?.role === 'admin';
 
-  // 页面加载时获取商品列表
+  // 组件加载时获取商品列表
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -36,20 +38,21 @@ const Products: React.FC = () => {
       }
     };
     fetchProducts();
-  }, [dispatch]); // 当组件重新挂载时，确保重新获取商品列表
+  }, [dispatch]); // 仅在组件挂载时执行一次
   
 
 
-  // 推荐商品数据，与主页保持一致
+  // 静态推荐商品数据（当API无法加载时）
   const recommendedProducts = [
-    { id: 1, name: '智能手机', price: 2999, discountPrice: 2499, image: product1Image, category: '电子产品' },
-    { id: 2, name: '无线耳机', price: 999, discountPrice: 799, image: product2Image, category: '电子产品' },
-    { id: 3, name: '智能手表', price: 1599, discountPrice: 1299, image: product3Image, category: '电子产品' },
-    { id: 4, name: '平板电脑', price: 3999, discountPrice: 3499, image: product4Image, category: '电子产品' },
-    { id: 5, name: '韩系穿搭高定轻奢水貂毛外套', price: 3999, discountPrice: 3599, image: product5Image, category: '服装' }
+    { id: 1, name: 'Samsung Galaxy Buds1 三星蓝牙耳机', price: 1599, discountPrice: 1399, image: product2Image, category: '耳机' },
+    { id: 2, name: 'Sony WH-1000XM5 头戴式智能降噪耳机（铂金银）', price: 2999, discountPrice: 2499, image: product4Image, category: '耳机' },
+    { id: 3, name: 'Samsung Galaxy Buds3 三星蓝牙耳机', price: 999, discountPrice: 899, image: product3Image, category: '耳机' },
+    { id: 4, name: '高保真无线蓝牙音箱（支持AAC/aptX解码）', price: 1299, discountPrice: 999, image: productSpeakerImage, category: '智能音箱' },
+    { id: 5, name: '韩版高端水貂毛短款外套（冬季轻奢系列）', price: 3999, discountPrice: 3599, image: product5Image, category: '服饰' },
+    { id: 6, name: '景德镇手工青花瓷茶具套装（6件套含茶盘）', price: 888, discountPrice: 688, image: productTeaImage, category: '家居日用' }
   ];
   
-  // 使用API返回的数据或推荐商品数据
+  // 优先显示API返回的商品
   const displayProducts = products.length > 0 ? products : recommendedProducts;
 
 
@@ -66,7 +69,7 @@ const Products: React.FC = () => {
             size="large"
             style={{ maxWidth: 400 }}
           />
-          {/* 只有管理员可以看到添加商品按钮 */}
+          {/* 仅管理员可见添加按钮 */}
           {isAdmin && (
             <Button type="primary" icon={<PlusOutlined />} size="large" onClick={() => navigate('/add-product')}>
               添加商品
@@ -77,7 +80,7 @@ const Products: React.FC = () => {
       
       <Row gutter={[16, 16]}>
         {loading ? (
-          // 只在首次加载时显示加载状态，避免影响推荐商品显示
+          // 加载骨架屏
           Array.from({ length: 8 }).map((_, index) => (
             <Col span={6} key={index}>
               <Card loading={true} />
@@ -93,7 +96,7 @@ const Products: React.FC = () => {
                     <img 
                       alt={product.name} 
                       src={product.image || 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'} 
-                      style={{ height: 200, objectFit: 'cover' }}
+                      style={{ aspectRatio: '1/1', objectFit: 'cover', width: '100%' }}
                     />
                   }
                   actions={[

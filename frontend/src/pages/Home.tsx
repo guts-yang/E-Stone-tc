@@ -9,14 +9,14 @@ import { getProducts } from '../redux/productSlice';
 
 // 导入商品图片
 import product1Image from '../assets/products/product-1-01.jpg';
-import product2Image from '../assets/products/product-2-01.jpg';
-import product3Image from '../assets/products/product-3-01.jpg';
+import product2Image from '../assets/products/buds-2.jpg';
+import product3Image from '../assets/products/buds3-1.jpg';
 import product4Image from '../assets/products/product-4-01.jpg';
+import productSpeakerImage from '../assets/products/speaker-1.jpg';
 
 // 导入轮播图图片
 import carousel1 from '../assets/carousel/1.png';
 import carousel2 from '../assets/carousel/2.png';
-import carousel3 from '../assets/carousel/3.png';
 
 const { Meta } = Card;
 
@@ -42,12 +42,6 @@ const Home: React.FC = () => {
       image: carousel2,
       title: '新品上市',
       description: '最新款电子产品，抢先体验！'
-    },
-    {
-      id: 3,
-      image: carousel3,
-      title: '限时抢购',
-      description: '每日限量商品，先到先得！'
     }
   ];
 
@@ -56,32 +50,32 @@ const Home: React.FC = () => {
     products.slice(0, 4) : 
     [
       {
-        id: 7,
-        name: '蓝牙耳机 Pro',
-        price: 999,
-        discountPrice: 799,
-        image: product1Image
-      },
-      {
-        id: 8,
-        name: '机械游戏键盘',
-        price: 1299,
-        discountPrice: 999,
+        id: 1,
+        name: '科大讯飞AI会议耳机 iFLYBUDS Pro',
+        price: 1599,
+        discountPrice: 1399,
         image: product2Image
       },
       {
-        id: 9,
-        name: '智能手机 Pro Max',
-        price: 6999,
-        discountPrice: 5999,
+        id: 2,
+        name: 'Sony WH-1000XM5 头戴式智能降噪耳机（铂金银）',
+        price: 2999,
+        discountPrice: 2499,
+        image: product4Image
+      },
+      {
+        id: 3,
+        name: 'Samsung Galaxy Buds3 三星蓝牙耳机',
+        price: 999,
+        discountPrice: 899,
         image: product3Image
       },
       {
-        id: 10,
-        name: '无线降噪耳机',
-        price: 1599,
-        discountPrice: 1299,
-        image: product4Image
+        id: 4,
+        name: '高保真无线蓝牙音箱（支持AAC/aptX解码）',
+        price: 1299,
+        discountPrice: 999,
+        image: productSpeakerImage
       }
     ];
 
@@ -100,16 +94,12 @@ const Home: React.FC = () => {
       {/* 轮播图 */}
       <Carousel autoplay style={{ margin: '0 0 30px 0', padding: 0, width: '100%', overflow: 'hidden', background: 'transparent', border: 'none' }}>
         {carouselItems.map(item => (
-          <div key={item.id} style={{ position: 'relative', width: '100%', height: '400px', overflow: 'hidden', background: 'transparent', margin: 0, padding: 0 }}>
+          <div key={item.id} style={{ position: 'relative', width: '100%', aspectRatio: '900/383', overflow: 'hidden', background: 'transparent', margin: 0, padding: 0 }}>
             <img
               src={item.image}
               alt={item.title}
               style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', background: 'transparent', display: 'block', margin: 0, padding: 0 }}
             />
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0, 0, 0, 0.5)', padding: '20px', color: '#fff' }}>
-              <h2 style={{ margin: '0 0 10px', fontSize: '24px' }}>{item.title}</h2>
-              <p style={{ margin: 0, fontSize: '16px' }}>{item.description}</p>
-            </div>
           </div>
         ))}
       </Carousel>

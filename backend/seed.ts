@@ -13,49 +13,66 @@ const seedData = async () => {
     await sequelize.authenticate();
     console.log('Connected to database successfully!');
 
-    // 只同步产品相关表，跳过用户表结构修改
-    await Category.sync({ force: false, alter: true });
-    await Product.sync({ force: false, alter: true });
-    await ProductImage.sync({ force: false, alter: true });
-    console.log('Database tables synced!');
+    // 只同步产品相关表，强制重建以修复可能的乱码或结构问题
+    // 注意：顺序很重要，先重建依赖表（子表），再重建被依赖表（父表），或者先禁用外键检查
+    await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
+    await ProductImage.sync({ force: true });
+    await Product.sync({ force: true });
+    await Category.sync({ force: true });
+    await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
+    console.log('Database tables synced (force rebuild)!');
 
     // 创建管理员用户
     const adminUsername = 'admin';
     const adminEmail = '578165807@qq.com';
     const adminPassword = 'Lcy@20050210';
     
-    let adminUser = await User.findOne({ where: { username: adminUsername } });
+    // 检查用户名或邮箱是否已存在
+    let adminUser = await User.findOne({ 
+      where: { 
+        [Symbol.for('or') as any]: [
+          { username: adminUsername },
+          { email: adminEmail }
+        ]
+      } as any
+    });
+    
     if (!adminUser) {
-      adminUser = await User.create({
-        username: adminUsername,
-        email: adminEmail,
-        password: adminPassword,
-        role: UserRole.ADMIN,
-        status: UserStatus.ACTIVE
-      });
-      console.log('管理员用户创建成功:', adminUser.username);
+      try {
+        adminUser = await User.create({
+          username: adminUsername,
+          email: adminEmail,
+          password: adminPassword,
+          role: UserRole.ADMIN,
+          status: UserStatus.ACTIVE
+        });
+        console.log('Admin user created:', adminUser.username);
 
-      // 创建管理员用户资料
-      await UserProfile.create({
-        userId: adminUser.id,
-        name: '管理员',
-        phone: '13316899160',
-        address: '中国',
-        city: '广州',
-        province: '广东省',
-        postalCode: '510000',
-        country: '中国'
-      });
-      console.log('管理员用户资料创建成功!');
+        // 创建管理员用户资料
+        await UserProfile.create({
+          userId: adminUser.id,
+          name: '管理员',
+          phone: '13316899160',
+          address: '中国',
+          city: '广州',
+          province: '广东省',
+          postalCode: '510000',
+          country: '中国'
+        });
+        console.log('Admin profile created!');
 
-      // 创建管理员购物车
-      await Cart.create({
-        userId: adminUser.id,
-        totalAmount: 0
-      });
-      console.log('管理员购物车创建成功!');
+        // 创建管理员购物车
+        await Cart.create({
+          userId: adminUser.id,
+          totalAmount: 0
+        });
+        console.log('Admin cart created!');
+      } catch (error: any) {
+        console.log('Error creating admin:', error.message);
+        adminUser = await User.findOne({ where: { username: adminUsername } });
+      }
     } else {
-      console.log('管理员用户已存在，跳过创建!');
+      console.log('Admin user exists, skipping!');
     }
 
     // 创建商品分类
@@ -79,7 +96,16 @@ const seedData = async () => {
     const productsData = [
       {
         categoryName: '蓝牙耳机',
-        name: 'Sony WH-1000XM5 无线降噪耳机',
+        name: 'Samsung Galaxy Buds1 三星蓝牙耳机',
+        description: '实时录音转文字，多语言翻译，AI智能摘要，45dB深度降噪，会议办公神器。',
+        price: 1599,
+        discountPrice: 1399,
+        stock: 100,
+        images: ['buds-2.jpg']
+      },
+      {
+        categoryName: '蓝牙耳机',
+        name: 'Sony WH-1000XM5 头戴式智能降噪耳机（铂金银）',
         description: '行业领先降噪技术，30小时续航，高解析度音频，支持多点连接。',
         price: 2999,
         discountPrice: 2499,
@@ -87,22 +113,22 @@ const seedData = async () => {
         images: ['headphones-1.jpg', 'headphones-2.jpg', 'headphones-3.jpg']
       },
       {
-        categoryName: '蓝牙耳机',
-        name: 'Bose QuietComfort 45 消噪耳机',
-        description: '世界级消噪技术，轻盈舒适，24小时续航，TriPort声学结构。',
-        price: 2699,
-        discountPrice: 2299,
-        stock: 40,
-        images: ['headphones-bose-1.jpg', 'headphones-bose-2.jpg']
+        categoryName: '无线耳机',
+        name: 'Samsung Galaxy Buds3 三星蓝牙耳机',
+        description: '开放式主动降噪，Hi-Fi高保真音质，AI智能翻译，舒适佩戴体验。',
+        price: 999,
+        discountPrice: 899,
+        stock: 80,
+        images: ['buds3-1.jpg']
       },
       {
-        categoryName: '游戏键盘',
-        name: '机械键盘 樱桃红轴 RGB背光',
-        description: '德国樱桃红轴，支持热插拔，1680万色RGB背光，全键无冲设计。',
-        price: 699,
-        discountPrice: 599,
-        stock: 100,
-        images: ['keyboard-1.jpg', 'keyboard-2.jpg', 'keyboard-3.jpg']
+        categoryName: '蓝牙耳机',
+        name: '高保真无线蓝牙音箱（支持AAC/aptX解码）',
+        description: '360度环绕立体声，超长续航，支持多种音频解码格式。',
+        price: 1299,
+        discountPrice: 999,
+        stock: 60,
+        images: ['speaker-1.jpg']
       },
       {
         categoryName: '游戏键盘',
@@ -112,15 +138,6 @@ const seedData = async () => {
         discountPrice: 799,
         stock: 80,
         images: ['keyboard-logitech-1.jpg', 'keyboard-logitech-2.jpg']
-      },
-      {
-        categoryName: '智能手机',
-        name: 'iPhone 15 Pro Max 256GB',
-        description: 'A17 Pro芯片，钛金属设计，5倍光学变焦，USB-C接口。',
-        price: 9999,
-        discountPrice: 8999,
-        stock: 30,
-        images: ['iphone-1.jpg', 'iphone-2.jpg', 'iphone-3.jpg']
       },
       {
         categoryName: '智能手机',
@@ -151,7 +168,7 @@ const seedData = async () => {
       },
       {
         categoryName: '服装',
-        name: '韩系穿搭高定轻奢水貂毛外套',
+        name: '韩版高端水貂毛短款外套（冬季轻奢系列）',
         description: '冬季V领一体绒宽松加厚防寒皮草大衣，韩系穿搭风格，高定轻奢品质，水貂毛材质，保暖舒适。',
         price: 599,
         discountPrice: 399,
@@ -175,6 +192,15 @@ const seedData = async () => {
         discountPrice: 199,
         stock: 150,
         images: ['jeans-1.jpg', 'jeans-2.jpg', 'jeans-3.jpg']
+      },
+      {
+        categoryName: '服装',
+        name: '景德镇手工青花瓷茶具套装（6件套含茶盘）',
+        description: '传统工艺，手工绘制，高温烧制，具有极高的收藏价值和使用价值。',
+        price: 888,
+        discountPrice: 688,
+        stock: 20,
+        images: ['tea-set-1.jpg']
       }
     ];
 
@@ -191,19 +217,19 @@ const seedData = async () => {
           stock: productData.stock,
           status: ProductStatus.ACTIVE
         });
-        console.log('商品创建成功:', product.name);
+        console.log('Product created:', product.name);
 
         for (let i = 0; i < productData.images.length; i++) {
           const imageName = productData.images[i];
           await ProductImage.create({
             productId: product.id,
-            imageUrl: `/products/${imageName}`,
+            imageUrl: `/public/products/${imageName}`,
             isPrimary: i === 0
           });
-          console.log(`  图片关联成功: ${imageName}`);
+          console.log(`  Image attached: ${imageName}`);
         }
       } else if (existingProduct) {
-        console.log('商品已存在，跳过:', productData.name);
+        console.log('Product exists, skipping:', productData.name);
       }
     }
 

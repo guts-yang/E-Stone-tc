@@ -1,10 +1,10 @@
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
 
-// åŠ è½½ç¯å¢ƒå˜é‡
+// ÅäÖÃ»·¾³±äÁ¿
 dotenv.config();
 
-// åˆ›å»ºSequelizeå®ä¾‹
+// ´´½¨SequelizeÊµÀı
 const sequelize = new Sequelize({
   database: process.env.DB_NAME || 'e_stone_db',
   username: process.env.DB_USER || 'root',
@@ -13,9 +13,12 @@ const sequelize = new Sequelize({
   port: Number(process.env.DB_PORT) || 3306,
   dialect: 'mysql',
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
-  dialectOptions: {
+  define: {
     charset: 'utf8mb4',
     collate: 'utf8mb4_unicode_ci',
+  },
+  dialectOptions: {
+    charset: 'utf8mb4',
   },
   pool: {
     max: 5,
@@ -25,13 +28,13 @@ const sequelize = new Sequelize({
   },
 });
 
-// æµ‹è¯•æ•°æ®åº“è¿æ¥
+// ²âÊÔÊı¾İ¿âÁ¬½Ó
 const testConnection = async () => {
   try {
     await sequelize.authenticate();
-    console.log('æ•°æ®åº“è¿æ¥æˆåŠŸï¼');
+    console.log('Êı¾İ¿âÁ¬½Ó³É¹¦£¡');
   } catch (error) {
-    console.error('æ•°æ®åº“è¿æ¥å¤±è´¥:', error);
+    console.error('ÎŞ·¨Á¬½Óµ½Êı¾İ¿â:', error);
     process.exit(1);
   }
 };

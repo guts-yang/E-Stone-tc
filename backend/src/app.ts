@@ -16,7 +16,7 @@ dotenv.config();
 // 创建Express应用
 const app = express();
 
-// 配置中间件
+// 配置CORS
 app.use(cors({
   origin: '*',
   credentials: true
@@ -25,7 +25,13 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 配置静态文件服务
+// 设置响应Content-Type为UTF-8
+app.use((_req, res, next) => {
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  next();
+});
+
+// 静态文件服务
 app.use('/public', express.static(path.join(__dirname, '../public')));
 
 // Swagger配置
@@ -35,12 +41,12 @@ const swaggerOptions = {
     info: {
       title: process.env.SWAGGER_TITLE || 'E-Stone API',
       version: process.env.SWAGGER_VERSION || '1.0.0',
-      description: process.env.SWAGGER_DESCRIPTION || '中文电子商务网站API文档'
+      description: process.env.SWAGGER_DESCRIPTION || 'E-Stone 商城 API 文档'
     },
     servers: [
       {
         url: process.env.SWAGGER_URL || 'http://localhost:3001',
-        description: '开发环境'
+        description: '开发服务器'
       }
     ]
   },
@@ -50,7 +56,7 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// 配置路由
+// 路由配置
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
@@ -58,12 +64,12 @@ app.use('/api/orders', orderRoutes);
 
 
 
-// 健康检查路由
+// 健康检查
 app.get('/api/health', (_req, res) => {
   res.status(200).json({ status: 'ok', message: 'E-Stone API is running' });
 });
 
-// 测试数据库连接
+// 初始化数据库
 async function init() {
   await testConnection();
 }
