@@ -7,6 +7,10 @@
 - **专业**：计算机科学与技术
 - **班级**：2023级计算机科学与技术2班
 
+<img width="327" height="315" alt="image" src="https://github.com/user-attachments/assets/5cfc27af-aae2-4a96-9af9-cf05eef8ad8f" />
+<img width="317" height="303" alt="image" src="https://github.com/user-attachments/assets/800a2cd2-95a6-4add-b99c-8474df35443f" />
+<img width="291" height="281" alt="image" src="https://github.com/user-attachments/assets/c6088cf8-1c33-4b33-b3d0-0f0315ea1474" />
+
 ## 项目概述
 
 E-Stone 是一个基于前后端分离架构的中文电子商务网站，提供完整的在线购物体验。它涵盖了商品展示、购物车管理、订单处理以及用户管理等核心功能，旨在提供一个流畅且安全的在线购物环境。
@@ -19,6 +23,7 @@ E-Stone 是一个基于前后端分离架构的中文电子商务网站，提供
 - **用户中心**：注册、登录、个人资料管理、订单历史查询
 - **支付功能**：支持微信支付和支付宝支付
 - **邮件通知**：订单支付成功后自动发送邮件通知用户
+
 
 ## 技术栈
 
