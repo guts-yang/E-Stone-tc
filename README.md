@@ -8,7 +8,9 @@
 - **班级**：2023级计算机科学与技术2班
 
 <img width="327" height="315" alt="image" src="https://github.com/user-attachments/assets/5cfc27af-aae2-4a96-9af9-cf05eef8ad8f" />
+
 <img width="317" height="303" alt="image" src="https://github.com/user-attachments/assets/800a2cd2-95a6-4add-b99c-8474df35443f" />
+
 <img width="291" height="281" alt="image" src="https://github.com/user-attachments/assets/c6088cf8-1c33-4b33-b3d0-0f0315ea1474" />
 
 ## 项目概述
@@ -117,6 +119,7 @@ npm run dev
 
 ## 访问地址
 
+- Ubuntu服务器：http://8.134.115.156:5173/
 - 前端：http://localhost:5173
 - 后端：http://localhost:3001
 - API 文档：http://localhost:3001/api-docs
