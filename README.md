@@ -1,12 +1,5 @@
 # E-Stone 电子商务网站
 
-## 学生信息
-
-- **姓名**：廖晨扬
-- **学号**：202330451061
-- **专业**：计算机科学与技术
-- **班级**：2023级计算机科学与技术2班
-
 <img width="327" height="315" alt="image" src="https://github.com/user-attachments/assets/5cfc27af-aae2-4a96-9af9-cf05eef8ad8f" />
 
 <img width="317" height="303" alt="image" src="https://github.com/user-attachments/assets/800a2cd2-95a6-4add-b99c-8474df35443f" />
